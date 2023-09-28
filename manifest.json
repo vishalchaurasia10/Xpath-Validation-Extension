@@ -1,0 +1,32 @@
+{
+    "manifest_version": 3,
+    "name": "XPath Validator",
+    "version": "1.0",
+    "description": "Validate XPaths on a web page",
+    "permissions": [
+        "activeTab"
+    ],
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": {
+            "16": "images/logo192.png",
+            "48": "images/logo192.png",
+            "128": "images/logo512.png"
+        }
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "content.js"
+            ]
+        }
+    ],
+    "icons": {
+        "16": "images/logo192.png",
+        "48": "images/logo192.png",
+        "128": "images/logo512.png"
+    }
+}
