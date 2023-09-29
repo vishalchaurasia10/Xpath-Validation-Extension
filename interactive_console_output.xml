@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 6.1.1 (Python 3.11.5 on win32)" generated="20230929 08:29:57.336" rpa="false" schemaversion="4">
+<suite id="s1" name="Robot Interactive Console" source="c:\Users\kvsin\.vscode\extensions\robocorp.robotframework-lsp-1.11.0\src\robotframework_ls\vendored\robotframework_interactive\robot_interactive_console.robot">
+<test id="s1-t1" name="Default Task/Test" line="5">
+<kw name="Interpreter Main Loop" library="MainLoop">
+<kw name="Read XPath Expressions From TXT">
+<var>${xpath_input}</var>
+<arg>xpath.txt</arg>
+<msg timestamp="20230929 08:29:57.721" level="FAIL">No keyword with name 'Read XPath Expressions From TXT' found.</msg>
+<status status="FAIL" starttime="20230929 08:29:57.721" endtime="20230929 08:29:57.721"/>
+</kw>
+<kw name="Create XPath List">
+<var>${xpath_list}</var>
+<arg>${xpath_input}</arg>
+<status status="NOT RUN" starttime="20230929 08:29:57.722" endtime="20230929 08:29:57.722"/>
+</kw>
+<kw name="Check XPath Expressions">
+<var>${valid_xpaths}</var>
+<var>${invalid_xpaths}</var>
+<arg>${xpath_list}</arg>
+<arg>${parsed_html}</arg>
+<status status="NOT RUN" starttime="20230929 08:29:57.722" endtime="20230929 08:29:57.722"/>
+</kw>
+<kw name="Log Valid and Invalid XPath Expressions">
+<arg>${valid_xpaths}</arg>
+<arg>${invalid_xpaths}</arg>
+<status status="NOT RUN" starttime="20230929 08:29:57.722" endtime="20230929 08:29:57.722"/>
+</kw>
+<status status="PASS" starttime="20230929 08:29:57.355" endtime="20230929 08:30:02.834"/>
+</kw>
+<status status="PASS" starttime="20230929 08:29:57.355" endtime="20230929 08:30:02.834"/>
+</test>
+<status status="PASS" starttime="20230929 08:29:57.340" endtime="20230929 08:30:02.836"/>
+</suite>
+<statistics>
+<total>
+<stat pass="1" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat pass="1" fail="0" skip="0" id="s1" name="Robot Interactive Console">Robot Interactive Console</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
