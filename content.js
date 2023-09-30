@@ -1,34 +1,22 @@
 // content.js
-function validateXPaths(xpaths) {
-    const results = [];
-    xpaths.forEach((xpath) => {
-        try {
-            const elements = document.evaluate(
-                xpath,
-                document,
-                null,
-                XPathResult.ANY_TYPE,
-                null
-            );
-            const element = elements.iterateNext();
-            if (element) {
-                results.push({ xpath, isValid: true });
-            } else {
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    if (request.action == "validateXPaths") {
+        const results = [];
+        (request.xpaths).forEach((xpath) => {
+            try {
+                const element = document.evaluate(xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+                if (element.snapshotLength > 0) {
+                    results.push({ xpath, isValid: true });
+                } else {
+                    results.push({ xpath, isValid: false });
+                }
+            } catch (error) {
+                console.log("error", error);
                 results.push({ xpath, isValid: false });
             }
-        } catch (error) {
-            results.push({ xpath, isValid: false });
-        }
-    });
-    return results;
-}
-
-const xpathsToValidate = ["//div[@id='example']", "//a[@class='link']"];
-const validationResults = validateXPaths(xpathsToValidate);
-
-// Send the validation results back to the popup
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    if (request.action === "validateXPaths") {
-        sendResponse(validationResults);
+        });
+        sendResponse(results);
     }
 });
+
