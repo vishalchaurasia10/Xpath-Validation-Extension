@@ -1,18 +1,88 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
-</head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xpath Validator</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: antiquewhite;
+        }
+
+        .container {
+            min-height: 250px;
+            width: 400px;
+            /* border: 2px solid black; */
+            padding: 2rem;
+            border-radius: 0.4rem;
+        }
+
+        .container h2 {
+            color: black;
+        }
+
+        .inputText {
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+            justify-content: center;
+        }
+
+        .inputText textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 1rem;
+            border-radius: 0.4rem;
+            padding: 0.5rem;
+        }
+
+        .inputText button {
+            width: 100px;
+            height: 30px;
+            border-radius: 0.4rem;
+            border: none;
+            background-color: #48f24e;
+            color: white;
+            font-weight: bold;
+        }
+
+        .inputText button:hover {
+            cursor: pointer;
+            background-color: #4CAF50;
+        }
+
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td,
+        th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+    </style>
+</head>
 <body>
     <div class="container">
         <h2>XPath Validator</h2>
-        <textarea id="xpathInput" placeholder="Enter XPaths here"></textarea>
-        <button id="validateButton">Validate</button>
+        <div class="inputText">
+            <textarea id="xpathInput" placeholder="Enter XPaths here"></textarea>
+            <button id="validateButton">Validate</button>
+        </div>
         <div id="validationResult"></div>
     </div>
     <script src="popup.js"></script>
 </body>
-
 </html>
