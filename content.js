@@ -1,5 +1,7 @@
 // content.js
 
+console.log("content.js");
+
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.action == "validateXPaths") {
         const results = [];
