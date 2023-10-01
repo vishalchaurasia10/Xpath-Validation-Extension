@@ -57,9 +57,13 @@
         }
 
         table {
+            margin-top: 1rem ;
             font-family: arial, sans-serif;
             border-collapse: collapse;
             width: 100%;
+            min-height: 0;
+            max-height: 200px;
+            overflow-y: scroll;
         }
 
         td,
@@ -81,7 +85,7 @@
             <textarea id="xpathInput" placeholder="Enter XPaths here"></textarea>
             <button id="validateButton">Validate</button>
         </div>
-        <div id="validationResult"></div>
+        <table id="validationResult"></table>
     </div>
     <script src="popup.js"></script>
 </body>

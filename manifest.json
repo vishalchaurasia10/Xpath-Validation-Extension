@@ -11,9 +11,9 @@
     "action": {
         "default_popup": "popup.html",
         "default_icon": {
-            "16": "images/logo192.png",
-            "48": "images/logo192.png",
-            "128": "images/logo512.png"
+            "16": "images/xpath(16).png",
+            "48": "images/xpath(48).png",
+            "128": "images/xpath(128).png"
         }
     },
     "content_scripts": [
@@ -27,8 +27,8 @@
         }
     ],
     "icons": {
-        "16": "images/logo192.png",
-        "48": "images/logo192.png",
-        "128": "images/logo512.png"
+        "16": "images/xpath(16).png",
+        "48": "images/xpath(48).png",
+        "128": "images/xpath(128).png"
     }
 }
