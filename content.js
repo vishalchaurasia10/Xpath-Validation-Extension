@@ -1,5 +1,5 @@
 // content.js
-console.log("content.js");
+console.log("Xpath Validator is active...");
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.action === "validateXPaths") {
