@@ -1,16 +1,22 @@
 var inputMode="xpath";
+flag=0;
 
 document.getElementById('mode').addEventListener('click',()=>{
+    if(flag%2==0){
     if(inputMode=="xpath"){
         inputMode="yaml";
     }
     else{
         inputMode="xpath";
     }
+    
+}
+   flag=flag+1;
 })
 document.getElementById("validateButton").addEventListener("click", function () {
     const xpathsTxtBox = document.getElementById("xpathInput").value
     var xpaths =[];
+
     if(inputMode=="yaml"){
     const regex = /"([^"]+)"/g;
     let match;
