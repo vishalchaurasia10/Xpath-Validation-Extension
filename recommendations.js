@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Extract XPath from the URL
     const urlParams = new URLSearchParams(window.location.search);
     const xpath = urlParams.get("xpath");
+    console.log(xpath)
 
     if (xpath) {
         // Send a message to content.js to fetch details for the XPath
@@ -13,6 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const activeTab = tabs[0];
             chrome.tabs.sendMessage(activeTab.id, { action: "getXPathDetails", xpath }, function (elementDetails) {
                 if (elementDetails) {
+                    console.log(1,elementDetails)
                     // Display the details in the HTML
                     xpathDetailsDiv.innerHTML = formatElementDetails(elementDetails);
                     // Add a click event listener to the highlight button
@@ -23,8 +25,11 @@ document.addEventListener("DOMContentLoaded", function () {
                             chrome.tabs.sendMessage(activeTab.id, { action: "highlightXPath", xpath });
                         });
                     });
+                    console.log("inside if")
                 } else {
-                    xpathDetailsDiv.innerHTML = formatRecommendationDetails(xpath);
+                    console.log(xpath)
+                    console.log("inside else")
+                    // xpathDetailsDiv.innerHTML = formatRecommendationDetails(xpath);
                 }
             });
         });

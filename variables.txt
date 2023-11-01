@@ -1,0 +1,10 @@
+//'freecodecamp'
+
+mainHeading   '//*[@id="site-main"]/div/article/header/h1'
+author  '//*[@id="site-main"]/div/article[-1]/section/div[1]/section/p[1]'
+code    '//*[@id="site-main"]/div/article/section/div[1]/section/pre[1]/code/text()'
+paragraph   '//*[@id="site-main"]/div/article/section/div[1]/section/p[11]'
+steps   '//*[@id="step-2-test-if-it-works"]'
+finish  '//*[@id="site-main"]/div/article/section/div[1]/section/p[17]'
+conclusion  '//*[@id="site-main"]/div/article/section/div[1]/section/p[21]'
+footerHeading   '/html/body/div/footer/div/div/div[1]/div[2]/div[1]'

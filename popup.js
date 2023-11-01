@@ -1,31 +1,31 @@
-var inputMode="xpath";
-flag=0;
+var inputMode = "xpath";
+flag = 0;
 
-document.getElementById('mode').addEventListener('click',()=>{
-    if(flag%2==0){
-    if(inputMode=="xpath"){
-        inputMode="yaml";
+document.getElementById('mode').addEventListener('click', () => {
+    if (flag % 2 == 0) {
+        if (inputMode == "xpath") {
+            inputMode = "yaml";
+        }
+        else {
+            inputMode = "xpath";
+        }
+
     }
-    else{
-        inputMode="xpath";
-    }
-    
-}
-   flag=flag+1;
+    flag = flag + 1;
 })
 document.getElementById("validateButton").addEventListener("click", function () {
     const xpathsTxtBox = document.getElementById("xpathInput").value
-    var xpaths =[];
+    var xpaths = [];
 
-    if(inputMode=="yaml"){
-    const regex = /"([^"]+)"/g;
-    let match;
-    while ((match = regex.exec(xpathsTxtBox)) !== null) {
-    xpaths.push(match[1]);
-    } 
-}   
-    else{
-        xpaths=xpathsTxtBox.split("\n").filter((xpath) => xpath.trim() !== "");
+    if (inputMode == "yaml") {
+        const regex = /'([^']+)'/g;
+        let match;
+        while ((match = regex.exec(xpathsTxtBox)) !== null) {
+            xpaths.push(match[1]);
+        }
+    }
+    else {
+        xpaths = xpathsTxtBox.split("\n").filter((xpath) => xpath.trim() !== "");
     }
     if (xpaths.length === 0) {
         // Handle the case where there are no XPaths to validate
