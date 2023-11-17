@@ -24,7 +24,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         });
                     });
                 } else {
-                    xpathDetailsDiv.innerHTML = formatRecommendationDetails(xpath);
+                    xpathDetailsDiv.innerHTML += formatRecommendationDetails(xpath);
+                    findCorrectXpath(xpath);
+                    recommendationOnTheBasisOfIdClass(xpath);
                 }
             });
         });
@@ -46,11 +48,14 @@ function formatElementDetails(details) {
 
 function formatRecommendationDetails(xpath) {
     let formattedDetails = '<h2><strong>Recommendations:</strong></h2>';
+    formattedDetails += '<h3>Possible XPaths by eliminating the elements from behind:</h3>'
     formattedDetails += '<ul>';
     generateXPathRecommendations(xpath).forEach((xpath) => {
         formattedDetails += `<li><a href="recommendations.html?xpath=${xpath}">${xpath}</a></li>`;
     });
     formattedDetails += '</ul>';
+    formattedDetails += '<hr>';
+    formattedDetails += '<hr>';
     return formattedDetails;
 }
 
@@ -62,14 +67,21 @@ function findCorrectXpath(xpath) {
             chrome.tabs.sendMessage(activeTab.id, { action: "getXPathDetails", xpath }, function (elementDetails) {
                 if (elementDetails) {
                     // Display the details in the HTML
-                    xpathDetailsDiv.innerHTML = xpath;
-                    highlightButton.addEventListener("click", function () {
-                        // Send a message to content.js to highlight the element
-                        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-                            const activeTab = tabs[0];
-                            chrome.tabs.sendMessage(activeTab.id, { action: "highlightXPath", xpath });
+                    if (xpath !== undefined) {
+                        xpathDetailsDiv.innerHTML += '<h3>Exact match by eleminating elements from behind:</h3>';
+                        xpathDetailsDiv.innerHTML += '<ul>'
+                        xpathDetailsDiv.innerHTML += `<li><a href="recommendations.html?xpath=${xpath}">${xpath}</a></li>`;
+                        xpathDetailsDiv.innerHTML += '</ul>'
+                        xpathDetailsDiv.innerHTML += '<hr>';
+                        xpathDetailsDiv.innerHTML += '<hr>';
+                        highlightButton.addEventListener("click", function () {
+                            // Send a message to content.js to highlight the element
+                            chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+                                const activeTab = tabs[0];
+                                chrome.tabs.sendMessage(activeTab.id, { action: "highlightXPath", xpath });
+                            });
                         });
-                    });
+                    }
                 } else {
                     const newXpath = popLastElement(xpath);
                     findCorrectXpath(newXpath);
@@ -102,4 +114,32 @@ function generateXPathRecommendations(xpath) {
     }
 
     return recommendations;
+}
+
+function recommendationOnTheBasisOfIdClass(xpath) {
+    if (xpath) {
+        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+            const activeTab = tabs[0];
+            chrome.tabs.sendMessage(activeTab.id, { action: "recommendationBasedOnIdClass", xpath }, function (suggestedXPath) {
+                if (suggestedXPath) {
+                    // Display the details in the HTML
+                    xpathDetailsDiv.innerHTML += '<h3>Recommendation on the basis of id and class:</h3>';
+                    xpathDetailsDiv.innerHTML += '<ul>'
+                    xpathDetailsDiv.innerHTML += `<li><a href="recommendations.html?xpath=${suggestedXPath}">${suggestedXPath}</a></li>`;
+                    xpathDetailsDiv.innerHTML += '</ul>'
+                    xpathDetailsDiv.innerHTML += '<hr>';
+                    xpathDetailsDiv.innerHTML += '<hr>';
+                    highlightButton.addEventListener("click", function () {
+                        // Send a message to content.js to highlight the element
+                        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+                            const activeTab = tabs[0];
+                            chrome.tabs.sendMessage(activeTab.id, { action: "highlightXPath", xpath });
+                        });
+                    });
+                } else {
+                    xpathDetailsDiv.textContent = "No XPath specified in the URL.";
+                }
+            });
+        });
+    }
 }
