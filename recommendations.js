@@ -116,6 +116,7 @@ function generateXPathRecommendations(xpath) {
     return recommendations;
 }
 
+
 function recommendationOnTheBasisOfIdClass(xpath) {
     if (xpath) {
         chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {

@@ -8,3 +8,7 @@ steps   '//*[@id="step-2-test-if-it-works"]'
 finish  '//*[@id="site-main"]/div/article/section/div[1]/section/p[17]'
 conclusion  '//*[@id="site-main"]/div/article/section/div[1]/section/p[21]'
 footerHeading   '/html/body/div/footer/div/div/div[1]/div[2]/div[1]'
+navbar  '/html/body/div/header/div[@id="nav"]'
+navbar2 '/html/body/div/header/div[@id="navbar"]/div[@id="nav-b"]'
+navbar2 '/html/body/div/header/div[@id="navbar"]/div[@id="belt"]'
+
