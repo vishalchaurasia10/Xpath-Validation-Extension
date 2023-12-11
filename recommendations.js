@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         });
                     });
                 } else {
-                    xpathDetailsDiv.innerHTML += formatRecommendationDetails(xpath);
+                    // xpathDetailsDiv.innerHTML += formatRecommendationDetails(xpath);
                     findCorrectXpath(xpath);
                     recommendationOnTheBasisOfIdClass(xpath);
                 }
@@ -46,18 +46,18 @@ function formatElementDetails(details) {
     return formattedDetails;
 }
 
-function formatRecommendationDetails(xpath) {
-    let formattedDetails = '<h2><strong>Recommendations:</strong></h2>';
-    formattedDetails += '<h3>Possible XPaths by eliminating the elements from behind:</h3>'
-    formattedDetails += '<ul>';
-    generateXPathRecommendations(xpath).forEach((xpath) => {
-        formattedDetails += `<li><a href="recommendations.html?xpath=${xpath}">${xpath}</a></li>`;
-    });
-    formattedDetails += '</ul>';
-    formattedDetails += '<hr>';
-    formattedDetails += '<hr>';
-    return formattedDetails;
-}
+// function formatRecommendationDetails(xpath) {
+//     let formattedDetails = '<h2><strong>Recommendations:</strong></h2>';
+//     formattedDetails += '<h3>Possible XPaths by eliminating the elements from behind:</h3>'
+//     formattedDetails += '<ul>';
+//     generateXPathRecommendations(xpath).forEach((xpath) => {
+//         formattedDetails += `<li><a href="recommendations.html?xpath=${xpath}">${xpath}</a></li>`;
+//     });
+//     formattedDetails += '</ul>';
+//     formattedDetails += '<hr>';
+//     formattedDetails += '<hr>';
+//     return formattedDetails;
+// }
 
 function findCorrectXpath(xpath) {
     if (xpath) {
@@ -124,7 +124,7 @@ function recommendationOnTheBasisOfIdClass(xpath) {
             chrome.tabs.sendMessage(activeTab.id, { action: "recommendationBasedOnIdClass", xpath }, function (suggestedXPath) {
                 if (suggestedXPath) {
                     // Display the details in the HTML
-                    xpathDetailsDiv.innerHTML += '<h3>Recommendation on the basis of id and class:</h3>';
+                    xpathDetailsDiv.innerHTML += '<h3>Recommendation on the basis of attributes:</h3>';
                     xpathDetailsDiv.innerHTML += '<ul>'
                     xpathDetailsDiv.innerHTML += `<li><a href="recommendations.html?xpath=${suggestedXPath}">${suggestedXPath}</a></li>`;
                     xpathDetailsDiv.innerHTML += '</ul>'

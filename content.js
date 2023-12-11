@@ -73,22 +73,18 @@ function suggestXPathCorrection(invalidXPath, document) {
             correctedXPath = partialXPath;
         } else {
             // Identify the type of correction needed (class or id)
-            const correctionType = identifyCorrectionType(partialXPath, document);
+            const correctionType = identifyCorrectionType(partialXPath);
             console.log('correctionType', correctionType);
 
             // Apply Levenshtein Distance to correct the identified part
-            const correctedValue = suggestCorrection(partialXPath, correctionType, document);
+            const { correctedValue, prefix } = suggestCorrection(partialXPath, correctionType, document);
             console.log('correctedValue', correctedValue);
 
             if (correctedValue) {
                 currentCorrectionType = correctionType;
 
                 // Reconstruct the corrected XPath with the correct format
-                if (currentCorrectionType === 'id') {
-                    correctedXPath = `${correctedXPath}/div[@id='${correctedValue}']`;
-                } else if (currentCorrectionType === 'class') {
-                    correctedXPath = `${correctedXPath}/div[contains(@class, '${correctedValue}')]`;
-                }
+                correctedXPath = `${correctedXPath}/${prefix}[@${currentCorrectionType}='${correctedValue}']`;
             } else {
                 // If no correction is found, break the loop
                 break;
@@ -111,41 +107,84 @@ function isValidXPath(xpath, document) {
     return false;
 }
 
-function identifyCorrectionType(partialXPath, document) {
+function identifyCorrectionType(partialXPath) {
 
-    const maxIdIdx = partialXPath.lastIndexOf('@id=');
-    const maxClassIdx = partialXPath.lastIndexOf('@class=');
-
-    if (maxIdIdx > maxClassIdx) {
-        return 'id';
-    }
-
-    return 'class';
+    const idx1 = partialXPath.lastIndexOf('@');
+    const idx2 = partialXPath.lastIndexOf('=');
+    return partialXPath.substring(idx1 + 1, idx2).trim();
 }
 
 function suggestCorrection(partialXPath, correctionType, document) {
     const lastElement = getLastElementFromXPath(partialXPath);
-    const extractedId = extractIdFromXPath(lastElement);
+    console.log('lastElement', lastElement);
+    const extractedValue = extractValueFromXPath(lastElement, correctionType);
+    console.log('extractedValue', extractedValue);
+    const prefix = lastElement.substring(0, lastElement.indexOf(`[`))
 
-    // Find elements with similar IDs
-    const similarElements = document.querySelectorAll(`[id*='${extractedId}']`);
+    if (correctionType === 'class') {
+        const classValues = extractedValue.split(' ');
+        const correctedClassValues = [];
+        classValues.forEach((classValue) => {
+            if (isValidXPath(`//${prefix}[contains(concat(' ', normalize-space(@class), ' '), ' ${classValue} ')]`, document)) {
+                console.log('valid xpath found for classValue', classValue);
+                correctedClassValues.push(classValue);
+                return;
+            }
 
-    // Initialize variables to track the most similar ID and its Levenshtein Distance
-    let mostSimilarId = null;
-    let minDistance = Number.MAX_VALUE;
+            const similarElements = document.querySelectorAll(`[${correctionType}*='${classValue}']`);
+            console.log('similar elements', similarElements, 'for classValue', classValue)
+            let mostSimilarValue = null;
+            let minDistance = Number.MAX_VALUE;
+            similarElements.forEach((element) => {
+                const currentValueList = element.getAttribute(correctionType).split(' ');
+                currentValueList.forEach((currentValue) => {
+                    if (currentValue === classValue) {
+                        return;
+                    }
+                    console.log('currentValue', currentValue, 'for classValue', classValue)
+                    const distance = levenshteinDistance(classValue, currentValue);
 
-    // Iterate through similar elements and find the most similar ID
-    similarElements.forEach((element) => {
-        const currentId = element.id;
-        const distance = levenshteinDistance(extractedId, currentId);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        mostSimilarValue = currentValue;
+                    }
+                })
+                
+            });
+            correctedClassValues.push(mostSimilarValue);
+            console.log('correctedClassValues', correctedClassValues)
+        });
+        console.log('correctedClassValues', correctedClassValues);
+        const correctedValue = correctedClassValues.join(' ');
+        return { correctedValue, prefix };
+    } else {
+        // Find elements with similar IDs
+        const xpath = `//${prefix}[contains(@${correctionType}, '${extractedValue}')]`;
+        const similarElements = document.evaluate(xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+        // console.log('similar elements', similarElements)
+        // Convert the snapshot into an array
+        const nodeList = Array.from({ length: similarElements.snapshotLength }, (_, index) => similarElements.snapshotItem(index));
 
-        if (distance < minDistance) {
-            minDistance = distance;
-            mostSimilarId = currentId;
-        }
-    });
+        // Now, 'nodeList' is an array of elements matching the XPath expression
+        console.log(nodeList);
+        // Initialize variables to track the most similar ID and its Levenshtein Distance
+        let mostSimilarValue = null;
+        let minDistance = Number.MAX_VALUE;
 
-    return mostSimilarId;
+        // Iterate through similar elements and find the most similar ID
+        nodeList.forEach((element) => {
+            const currentValue = element.getAttribute(correctionType);
+            const distance = levenshteinDistance(extractedValue, currentValue);
+
+            if (distance < minDistance) {
+                minDistance = distance;
+                mostSimilarValue = currentValue;
+            }
+        });
+
+        console.log('prefix', prefix);
+        return { correctedValue: mostSimilarValue, prefix };
+    }
 }
 
 // Function to extract the last element from the right in a partial XPath
@@ -155,8 +194,9 @@ function getLastElementFromXPath(partialXPath) {
 }
 
 // Function to extract the ID from an XPath element (e.g., "@id='example'")
-function extractIdFromXPath(element) {
-    const matches = element.match(/@id='([^']+)'/);
+function extractValueFromXPath(element, correctionType) {
+    const matches = element.match(new RegExp(`@${correctionType}='([^']+)'`));
+    console.log('matches', matches);
     return matches ? matches[1] : null;
 }
 

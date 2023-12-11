@@ -11,4 +11,6 @@ footerHeading   '/html/body/div/footer/div/div/div[1]/div[2]/div[1]'
 navbar  '/html/body/div/header/div[@id="nav"]'
 navbar2 '/html/body/div/header/div[@id="navbar"]/div[@id="nav-b"]'
 navbar2 '/html/body/div/header/div[@id="navbar"]/div[@id="belt"]'
+xyz '//*[@id="what-is-a--extension"]'
+header '//*[@class="nav-mobile"]'
 
