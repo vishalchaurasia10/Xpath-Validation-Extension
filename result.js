@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Create an anchor tag with an href to recommendation.html
             const anchor = document.createElement("a");
             anchor.href = `recommendations.html?xpath=${encodeURIComponent(result.xpath)}`;
+            anchor.classList.add("flex", "items-center")
 
             // Create Font Awesome icons for valid and invalid XPaths
             const icon = document.createElement("i");

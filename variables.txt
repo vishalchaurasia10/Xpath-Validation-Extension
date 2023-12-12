@@ -1,4 +1,4 @@
-//'freecodecamp'
+freecodecamp.org
 
 mainHeading   '//*[@id="site-main"]/div/article/header/h1'
 author  '//*[@id="site-main"]/div/article[-1]/section/div[1]/section/p[1]'
@@ -8,9 +8,15 @@ steps   '//*[@id="step-2-test-if-it-works"]'
 finish  '//*[@id="site-main"]/div/article/section/div[1]/section/p[17]'
 conclusion  '//*[@id="site-main"]/div/article/section/div[1]/section/p[21]'
 footerHeading   '/html/body/div/footer/div/div/div[1]/div[2]/div[1]'
+
+
+amazon.in
+
 navbar  '/html/body/div/header/div[@id="nav"]'
-navbar2 '/html/body/div/header/div[@id="navbar"]/div[@id="nav-b"]'
-navbar2 '/html/body/div/header/div[@id="navbar"]/div[@id="belt"]'
+navbar2 '/html/body/div/header/div[@id="nav"]/div[1]/div[2]/div[@id="nav-progressive-g"]'
 xyz '//*[@id="what-is-a--extension"]'
 header '//*[@class="nav-mobile"]'
+navbelt '//*[@id="nav-b"]'
+navbar  '//*[@role="navigati"]'
+naviagtion  '//*[@aria-label="ation"]'
 

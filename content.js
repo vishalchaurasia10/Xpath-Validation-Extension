@@ -64,24 +64,30 @@ function extractDetailsFromElement(element) {
 
 function suggestXPathCorrection(invalidXPath, document) {
     const xpathParts = invalidXPath.split('/');
+    // console.log('xpathParts', xpathParts);
     let correctedXPath = '';
     let currentCorrectionType = null;
+    // let partialXPath = `/${xpathParts.slice(1, i).join('/')}`;
 
-    for (let i = 1; i <= xpathParts.length; i++) {
-        const partialXPath = `/${xpathParts.slice(1, i).join('/')}`;
-        if (isValidXPath(partialXPath, document)) {
-            correctedXPath = partialXPath;
+    for (let i = 1; i <= xpathParts.length - 1; i++) {
+        correctedXPath += `/${xpathParts[i]}`;
+        // console.log('correctedXPath', correctedXPath);
+
+        if (isValidXPath(correctedXPath, document)) {
+            // If the corrected XPath is valid, continue to the next part
+            continue;
         } else {
             // Identify the type of correction needed (class or id)
-            const correctionType = identifyCorrectionType(partialXPath);
-            console.log('correctionType', correctionType);
+            const correctionType = identifyCorrectionType(correctedXPath);
+            // console.log('correctionType', correctionType);
 
             // Apply Levenshtein Distance to correct the identified part
-            const { correctedValue, prefix } = suggestCorrection(partialXPath, correctionType, document);
-            console.log('correctedValue', correctedValue);
+            const { correctedValue, prefix } = suggestCorrection(correctedXPath, correctionType, document);
+            // console.log('correctedValue', correctedValue);
 
             if (correctedValue) {
                 currentCorrectionType = correctionType;
+                correctedXPath = correctedXPath.replace(`/${xpathParts[i]}`, '')
 
                 // Reconstruct the corrected XPath with the correct format
                 correctedXPath = `${correctedXPath}/${prefix}[@${currentCorrectionType}='${correctedValue}']`;
@@ -116,9 +122,10 @@ function identifyCorrectionType(partialXPath) {
 
 function suggestCorrection(partialXPath, correctionType, document) {
     const lastElement = getLastElementFromXPath(partialXPath);
-    console.log('lastElement', lastElement);
+    // console.log('partialXPath', partialXPath)
+    // console.log('lastElement', lastElement);
     const extractedValue = extractValueFromXPath(lastElement, correctionType);
-    console.log('extractedValue', extractedValue);
+    // console.log('extractedValue', extractedValue);
     const prefix = lastElement.substring(0, lastElement.indexOf(`[`))
 
     if (correctionType === 'class') {
@@ -126,13 +133,13 @@ function suggestCorrection(partialXPath, correctionType, document) {
         const correctedClassValues = [];
         classValues.forEach((classValue) => {
             if (isValidXPath(`//${prefix}[contains(concat(' ', normalize-space(@class), ' '), ' ${classValue} ')]`, document)) {
-                console.log('valid xpath found for classValue', classValue);
+                // console.log('valid xpath found for classValue', classValue);
                 correctedClassValues.push(classValue);
                 return;
             }
 
             const similarElements = document.querySelectorAll(`[${correctionType}*='${classValue}']`);
-            console.log('similar elements', similarElements, 'for classValue', classValue)
+            // console.log('similar elements', similarElements, 'for classValue', classValue)
             let mostSimilarValue = null;
             let minDistance = Number.MAX_VALUE;
             similarElements.forEach((element) => {
@@ -141,7 +148,7 @@ function suggestCorrection(partialXPath, correctionType, document) {
                     if (currentValue === classValue) {
                         return;
                     }
-                    console.log('currentValue', currentValue, 'for classValue', classValue)
+                    // console.log('currentValue', currentValue, 'for classValue', classValue)
                     const distance = levenshteinDistance(classValue, currentValue);
 
                     if (distance < minDistance) {
@@ -149,24 +156,24 @@ function suggestCorrection(partialXPath, correctionType, document) {
                         mostSimilarValue = currentValue;
                     }
                 })
-                
+
             });
             correctedClassValues.push(mostSimilarValue);
-            console.log('correctedClassValues', correctedClassValues)
+            // console.log('correctedClassValues', correctedClassValues)
         });
-        console.log('correctedClassValues', correctedClassValues);
+        // console.log('correctedClassValues', correctedClassValues);
         const correctedValue = correctedClassValues.join(' ');
         return { correctedValue, prefix };
     } else {
         // Find elements with similar IDs
         const xpath = `//${prefix}[contains(@${correctionType}, '${extractedValue}')]`;
+        // console.log('xpath', xpath)
         const similarElements = document.evaluate(xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         // console.log('similar elements', similarElements)
-        // Convert the snapshot into an array
         const nodeList = Array.from({ length: similarElements.snapshotLength }, (_, index) => similarElements.snapshotItem(index));
 
         // Now, 'nodeList' is an array of elements matching the XPath expression
-        console.log(nodeList);
+        // console.log(nodeList);
         // Initialize variables to track the most similar ID and its Levenshtein Distance
         let mostSimilarValue = null;
         let minDistance = Number.MAX_VALUE;
@@ -182,7 +189,7 @@ function suggestCorrection(partialXPath, correctionType, document) {
             }
         });
 
-        console.log('prefix', prefix);
+        // console.log('prefix', prefix);
         return { correctedValue: mostSimilarValue, prefix };
     }
 }
@@ -196,7 +203,7 @@ function getLastElementFromXPath(partialXPath) {
 // Function to extract the ID from an XPath element (e.g., "@id='example'")
 function extractValueFromXPath(element, correctionType) {
     const matches = element.match(new RegExp(`@${correctionType}='([^']+)'`));
-    console.log('matches', matches);
+    // console.log('matches', matches);
     return matches ? matches[1] : null;
 }
 
