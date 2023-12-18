@@ -126,7 +126,9 @@ function recommendationOnTheBasisOfIdClass(xpath) {
                     // Display the details in the HTML
                     xpathDetailsDiv.innerHTML += '<h3>Recommendation on the basis of attributes:</h3>';
                     xpathDetailsDiv.innerHTML += '<ul>'
-                    xpathDetailsDiv.innerHTML += `<li><a href="recommendations.html?xpath=${suggestedXPath}">${suggestedXPath}</a></li>`;
+                    suggestedXPath.forEach((suggestedXPath) => {
+                        xpathDetailsDiv.innerHTML += `<li><a href="recommendations.html?xpath=${encodeURIComponent(suggestedXPath)}">${suggestedXPath}</a></li>`;
+                    });
                     xpathDetailsDiv.innerHTML += '</ul>'
                     xpathDetailsDiv.innerHTML += '<hr>';
                     xpathDetailsDiv.innerHTML += '<hr>';
