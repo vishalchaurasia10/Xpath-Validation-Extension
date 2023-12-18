@@ -29,11 +29,14 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         }
     } else if (request.action === "highlightXPath") {
         const xpath = request.xpath;
+        console.log("xpath", xpath);
         try {
             const element = document.evaluate(xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+            console.log("element", element);
             if (element.snapshotLength > 0) {
                 // Get the first matching element
                 const firstElement = element.snapshotItem(0);
+                console.log("firstElement", firstElement);
 
                 // Highlight the element (customize the highlighting style)
                 firstElement.style.border = "2px solid red";
@@ -61,10 +64,19 @@ function extractDetailsFromElement(element) {
     };
     return details;
 }
+
+function arrayToXPathSet(xpathArray) {
+    // Create a Set from the array to eliminate duplicates
+    var xpathSet = new Set(xpathArray);
+
+    return xpathSet;
+}
+
 function suggestXPathCorrection(invalidXPath, document) {
     const xpathParts = invalidXPath.split('/');
     let outerLoop = [];
     let childArray = [];
+
 
     outerLoop.push(`/${xpathParts[1]}`);
 
@@ -107,6 +119,13 @@ function suggestXPathCorrection(invalidXPath, document) {
 
     console.log('outerLoop', outerLoop);
 
+    console.log('invalidXPath', invalidXPath);
+    outerLoop = outerLoop.filter((xpath) => {
+        return xpath!==invalidXPath;
+      });
+
+    const xpathSet = arrayToXPathSet(outerLoop);
+    outerLoop = [...xpathSet];
     return outerLoop;
 }
 
@@ -139,40 +158,17 @@ function suggestCorrection(partialXPath, correctionType, document) {
 
     if (correctionType === 'class') {
         const classValues = extractedValue.split(' ');
-        const allPossibleClassXpaths = [];
+        const allPossibleClassLists = [];
         classValues.forEach((classValue) => {
-            if (isValidXPath(`//${prefix}[contains(concat(' ', normalize-space(@class), ' '), ' ${classValue} ')]`, document)) {
-                // console.log('valid xpath found for classValue', classValue);
-                correctedClassValues.push(classValue);
-                return;
-            }
-
-            const similarElements = document.querySelectorAll(`[${correctionType}*='${classValue}']`);
-            // console.log('similar elements', similarElements, 'for classValue', classValue)
-            let mostSimilarValue = null;
-            // let minDistance = Number.MAX_VALUE;
-            similarElements.forEach((element) => {
-                const currentValueList = element.getAttribute(correctionType).split(' ');
-                currentValueList.forEach((currentValue) => {
-                    if (currentValue === classValue) {
-                        return;
-                    }
-                    // console.log('currentValue', currentValue, 'for classValue', classValue)
-                    // const distance = levenshteinDistance(classValue, currentValue);
-                    allPossibleClassXpaths.push({ currentValue: currentValue, distance: distance })
-                    // if (distance < minDistance) {
-                    //     minDistance = distance;
-                    //     mostSimilarValue = currentValue;
-                    // }
-                })
-
+            const partialXPath = `//${prefix}[contains(@${correctionType}, '${classValue}')]`;
+            const similarElements = document.evaluate(partialXPath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+            const nodeList = Array.from({ length: similarElements.snapshotLength }, (_, index) => similarElements.snapshotItem(index));
+            nodeList.forEach((element) => {
+                const currentValue = element.getAttribute(correctionType);
+                allPossibleClassLists.push(currentValue);
             });
-            // correctedClassValues.push(mostSimilarValue);
-            // console.log('correctedClassValues', correctedClassValues)
         });
-        // console.log('correctedClassValues', correctedClassValues);
-        const correctedValue = correctedClassValues.join(' ');
-        return { correctedValue, prefix };
+        return { allPossibleXpaths: allPossibleClassLists, prefix };
     } else {
         // Find elements with similar IDs
         const xpath = `//${prefix}[contains(@${correctionType}, '${extractedValue}')]`;
