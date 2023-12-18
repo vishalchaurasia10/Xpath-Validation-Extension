@@ -61,44 +61,53 @@ function extractDetailsFromElement(element) {
     };
     return details;
 }
-
 function suggestXPathCorrection(invalidXPath, document) {
     const xpathParts = invalidXPath.split('/');
-    // console.log('xpathParts', xpathParts);
-    let correctedXPath = '';
-    let currentCorrectionType = null;
-    // let partialXPath = `/${xpathParts.slice(1, i).join('/')}`;
+    let outerLoop = [];
+    let childArray = [];
 
-    for (let i = 1; i <= xpathParts.length - 1; i++) {
-        correctedXPath += `/${xpathParts[i]}`;
-        // console.log('correctedXPath', correctedXPath);
+    outerLoop.push(`/${xpathParts[1]}`);
 
-        if (isValidXPath(correctedXPath, document)) {
-            // If the corrected XPath is valid, continue to the next part
-            continue;
-        } else {
-            // Identify the type of correction needed (class or id)
-            const correctionType = identifyCorrectionType(correctedXPath);
-            // console.log('correctionType', correctionType);
-
-            // Apply Levenshtein Distance to correct the identified part
-            const { correctedValue, prefix } = suggestCorrection(correctedXPath, correctionType, document);
-            // console.log('correctedValue', correctedValue);
-
-            if (correctedValue) {
-                currentCorrectionType = correctionType;
-                correctedXPath = correctedXPath.replace(`/${xpathParts[i]}`, '')
-
-                // Reconstruct the corrected XPath with the correct format
-                correctedXPath = `${correctedXPath}/${prefix}[@${currentCorrectionType}='${correctedValue}']`;
+    for (let i = 2; i <= xpathParts.length; i++) {
+        let tempCorrectedValue;  // Declare tempCorrectedValue with let
+        outerLoop.forEach((partialXPath, index) => {
+            if (isValidXPath(partialXPath, document)) {
+                console.log('valid xpath found', partialXPath);
             } else {
-                // If no correction is found, break the loop
-                break;
+                console.log('invalid xpath found', partialXPath);
+                const correctionType = identifyCorrectionType(partialXPath);
+                const { allPossibleXpaths, prefix } = suggestCorrection(partialXPath, correctionType, document);
+                childArray = allPossibleXpaths.map((possibleXpath) => {
+                    const currentValue  = possibleXpath;
+                    let currentCorrectionType = correctionType;  // Declare currentCorrectionType with let
+                    tempCorrectedValue = partialXPath.replace(`/${xpathParts[i-1]}`, '');
+
+                    // Reconstruct the corrected XPath with the correct format
+                    tempCorrectedValue = `${tempCorrectedValue}/${prefix}[@${currentCorrectionType}='${currentValue}']`;
+
+                    if (isValidXPath(tempCorrectedValue, document)) {
+                        return tempCorrectedValue;
+                    }
+                    return null; // return null for invalid XPaths
+                })
+                    .filter(Boolean); // filter out null values
+                outerLoop.splice(index, 1);
             }
+        });
+
+        if (childArray.length > 0) {
+            outerLoop.push(...childArray);
+        }
+        if (i < xpathParts.length) {
+            outerLoop = outerLoop.map((tempCorrectedValue) => {
+                return  tempCorrectedValue +`/${xpathParts[i]}`;
+            });
         }
     }
 
-    return correctedXPath;
+    console.log('outerLoop', outerLoop);
+
+    return outerLoop;
 }
 
 function isValidXPath(xpath, document) {
@@ -130,7 +139,7 @@ function suggestCorrection(partialXPath, correctionType, document) {
 
     if (correctionType === 'class') {
         const classValues = extractedValue.split(' ');
-        const correctedClassValues = [];
+        const allPossibleClassXpaths = [];
         classValues.forEach((classValue) => {
             if (isValidXPath(`//${prefix}[contains(concat(' ', normalize-space(@class), ' '), ' ${classValue} ')]`, document)) {
                 // console.log('valid xpath found for classValue', classValue);
@@ -141,7 +150,7 @@ function suggestCorrection(partialXPath, correctionType, document) {
             const similarElements = document.querySelectorAll(`[${correctionType}*='${classValue}']`);
             // console.log('similar elements', similarElements, 'for classValue', classValue)
             let mostSimilarValue = null;
-            let minDistance = Number.MAX_VALUE;
+            // let minDistance = Number.MAX_VALUE;
             similarElements.forEach((element) => {
                 const currentValueList = element.getAttribute(correctionType).split(' ');
                 currentValueList.forEach((currentValue) => {
@@ -149,16 +158,16 @@ function suggestCorrection(partialXPath, correctionType, document) {
                         return;
                     }
                     // console.log('currentValue', currentValue, 'for classValue', classValue)
-                    const distance = levenshteinDistance(classValue, currentValue);
-
-                    if (distance < minDistance) {
-                        minDistance = distance;
-                        mostSimilarValue = currentValue;
-                    }
+                    // const distance = levenshteinDistance(classValue, currentValue);
+                    allPossibleClassXpaths.push({ currentValue: currentValue, distance: distance })
+                    // if (distance < minDistance) {
+                    //     minDistance = distance;
+                    //     mostSimilarValue = currentValue;
+                    // }
                 })
 
             });
-            correctedClassValues.push(mostSimilarValue);
+            // correctedClassValues.push(mostSimilarValue);
             // console.log('correctedClassValues', correctedClassValues)
         });
         // console.log('correctedClassValues', correctedClassValues);
@@ -175,22 +184,23 @@ function suggestCorrection(partialXPath, correctionType, document) {
         // Now, 'nodeList' is an array of elements matching the XPath expression
         // console.log(nodeList);
         // Initialize variables to track the most similar ID and its Levenshtein Distance
-        let mostSimilarValue = null;
         let minDistance = Number.MAX_VALUE;
 
+        const allPossibleXpaths = []
         // Iterate through similar elements and find the most similar ID
         nodeList.forEach((element) => {
             const currentValue = element.getAttribute(correctionType);
-            const distance = levenshteinDistance(extractedValue, currentValue);
+            // const distance = levenshteinDistance(extractedValue, currentValue);
 
-            if (distance < minDistance) {
-                minDistance = distance;
-                mostSimilarValue = currentValue;
-            }
+            // if (distance < minDistance) {
+            //     minDistance = distance;
+            //     mostSimilarValue = currentValue;
+            // }
+            allPossibleXpaths.push( currentValue)
         });
 
         // console.log('prefix', prefix);
-        return { correctedValue: mostSimilarValue, prefix };
+        return { allPossibleXpaths, prefix };
     }
 }
 
