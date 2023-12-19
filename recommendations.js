@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const xpath = urlParams.get("xpath");
 
     if (xpath) {
-        // Send a message to content.js to fetch details for the XPath
+// Send a message to content.js to fetch details for the XPath
         chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
             const activeTab = tabs[0];
             chrome.tabs.sendMessage(activeTab.id, { action: "getXPathDetails", xpath }, function (elementDetails) {
@@ -125,11 +125,11 @@ function recommendationOnTheBasisOfIdClass(xpath) {
                 if (suggestedXPath) {
                     // Display the details in the HTML
                     xpathDetailsDiv.innerHTML += '<h3>Recommendation on the basis of attributes:</h3>';
-                    xpathDetailsDiv.innerHTML += '<ul>'
+                    xpathDetailsDiv.innerHTML += '<ol>'
                     suggestedXPath.forEach((suggestedXPath) => {
                         xpathDetailsDiv.innerHTML += `<li><a href="recommendations.html?xpath=${encodeURIComponent(suggestedXPath)}">${suggestedXPath}</a></li>`;
                     });
-                    xpathDetailsDiv.innerHTML += '</ul>'
+                    xpathDetailsDiv.innerHTML += '</ol>'
                     xpathDetailsDiv.innerHTML += '<hr>';
                     xpathDetailsDiv.innerHTML += '<hr>';
                     highlightButton.addEventListener("click", function () {
