@@ -38,11 +38,11 @@ document.addEventListener("DOMContentLoaded", function () {
 // Function to format element details for display
 function formatElementDetails(details) {
     let formattedDetails = '<h3>Element Details:</h3>';
-    formattedDetails += '<ul>';
+    formattedDetails += '<ol>';
     for (const key in details) {
         formattedDetails += `<li><strong>${key}:</strong> ${details[key]}</li>`;
     }
-    formattedDetails += '</ul>';
+    formattedDetails += '</ol>';
     return formattedDetails;
 }
 
@@ -69,9 +69,9 @@ function findCorrectXpath(xpath) {
                     // Display the details in the HTML
                     if (xpath !== undefined) {
                         xpathDetailsDiv.innerHTML += '<h3>Exact match by eleminating elements from behind:</h3>';
-                        xpathDetailsDiv.innerHTML += '<ul>'
+                        xpathDetailsDiv.innerHTML += '<ol>'
                         xpathDetailsDiv.innerHTML += `<li><a href="recommendations.html?xpath=${xpath}">${xpath}</a></li>`;
-                        xpathDetailsDiv.innerHTML += '</ul>'
+                        xpathDetailsDiv.innerHTML += '</ol>'
                         xpathDetailsDiv.innerHTML += '<hr>';
                         xpathDetailsDiv.innerHTML += '<hr>';
                         highlightButton.addEventListener("click", function () {
@@ -129,8 +129,8 @@ function recommendationOnTheBasisOfIdClass(xpath) {
                     suggestedXPath.forEach((suggestedXPath) => {
                         xpathDetailsDiv.innerHTML += `<li><a href="recommendations.html?xpath=${encodeURIComponent(suggestedXPath)}">${suggestedXPath}</a></li>`;
                     });
-                    xpathDetailsDiv.innerHTML += '</ol>'
-                    xpathDetailsDiv.innerHTML += '<hr>';
+                    // xpathDetailsDiv.innerHTML += ''
+                    xpathDetailsDiv.innerHTML += '</ol><hr>';
                     xpathDetailsDiv.innerHTML += '<hr>';
                     highlightButton.addEventListener("click", function () {
                         // Send a message to content.js to highlight the element

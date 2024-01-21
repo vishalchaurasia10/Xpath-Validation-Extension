@@ -1,0 +1,20 @@
+
+mainHeading: /html/body/div/header/div[@id="site-main"]/div/article/header/h1
+author: /html/body/div/header/div[@id="site-main"]/div/article[-1]/section/div[1]/section/p[1]
+code: /html/body/div/header/div[@id="site-main"]/div/article/section/div[1]/section/pre[1]/code/text()
+paragraph: /html/body/div/header/div[@id="site-main"]/div/article/section/div[1]/section/p[11]
+steps: /html/body/div/header/div[@id="step-2-test-if-it-works"]
+finish: /html/body/div/header/div[@id="site-main"]/div/article/section/div[1]/section/p[17]
+conclusion: /html/body/div/header/div[@id="site-main"]/div/article/section/div[1]/section/p[21]
+footerHeading: /html/body/div/footer/div/div/div[1]/div[2]/div[1]
+
+
+
+navbar: /html/body/div/header/div[@id="nav"]
+navbar2: /html/body/div/header/div[@id="nav"]/div[1]/div[2]/div[@id="nav-progressive-g"]
+navbelt: /html/body/div/header/div[@id="nav-b"]
+navbar: /html/body/div/header/div[@role="navigati"]
+naviagtion: /html/body/div/header/div[@aria-label="ation"]
+abc: /html/body/div/header/div[@cel_widget_id="desktop-hero-order"]/div[@class="a-section a-spacing-none aok-relative tall gw-desktop-herotator-ready"]
+heloo: /html/body/div/header/div[@id="desktop-banner"]/div[@class="a-section a-spacing-none aok-relative tall gw-desktop-herotator-ready"]
+there: /html/body/div/header/div[@id="navFooter"]/div[@role="presentation"]
