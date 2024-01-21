@@ -6,12 +6,13 @@ document.addEventListener("DOMContentLoaded", function () {
     if (storedResults) {
         const results = JSON.parse(storedResults);
         validationResultDiv.innerHTML = "";
+        console.log(results);
         results.forEach((result) => {
             const resultDiv = document.createElement("div");
 
             // Create an anchor tag with an href to recommendation.html
             const anchor = document.createElement("a");
-            anchor.href = `recommendations.html?xpath=${encodeURIComponent(result.xpath)}`;
+            anchor.href = `recommendations.html?xpath=${encodeURIComponent(result.value)}`;
             anchor.classList.add("flex", "items-center")
 
             // Create Font Awesome icons for valid and invalid XPaths
@@ -23,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             // Create a text node for the result message
-            const resultText = document.createTextNode(`${result.xpath}`);
+            const resultText = document.createTextNode(`${result.key} : ${result.value}`);
 
             // Append the icon and result text to the anchor tag
             anchor.appendChild(icon);

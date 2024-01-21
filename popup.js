@@ -9,15 +9,14 @@ document.getElementById('mode').addEventListener('click', () => {
         else {
             inputMode = "xpath";
         }
-
     }
     flag = flag + 1;
 })
-document.getElementById("fileIp").addEventListener("change",()=>{
-    readFile().then(content=>{
+document.getElementById("fileIp").addEventListener("change", () => {
+    readFile().then(content => {
         console.log(content)
         validateXPaths(content)
-    }).catch(error=>{
+    }).catch(error => {
         alert(error)
     })
 })
@@ -43,27 +42,34 @@ function readFile() {
 }
 
 
-document.getElementById("validateButton").addEventListener("click",()=>validateXPaths(document.getElementById("xpathInput").value) );
+document.getElementById("validateButton").addEventListener("click", () => validateXPaths(document.getElementById("xpathInput").value));
 
-const validateXPaths=function (xpathsTxtBox) {
+const validateXPaths = function (xpathsTxtBox) {
     let xpaths = [];
     let newxpaths = [];
-    
+
     if (inputMode == "yaml") {
-        const regex = /'([^']+)'/g;
-    let match;
-    while ((match = regex.exec(xpathsTxtBox)) !== null) {
-        xpaths.push(match[1]);
-    }
-    newxpaths = xpaths.map(xpath => {
-        return xpath.replace(/"/g, "'");
-    });    
+        const regex = /([^:\s]+)\s*:\s*(.+)/g;
+        let match;
+        while ((match = regex.exec(xpathsTxtBox)) !== null) {
+            const key = match[1];
+            const value = match[2];
+            xpaths.push({ key, value });
+        }
+        newxpaths = xpaths.map(xpath => {
+            return {
+                key: xpath.key,
+                value: xpath.value.replace(/"/g, "'")
+                }
+        });
     }
     else {
         xpaths = xpathsTxtBox.split("\n").filter((xpath) => xpath.trim() !== "");
+        i=0;
         newxpaths = xpaths.map(xpath => {
-            return xpath.replace(/"/g, "'");
-        });        
+            i++;
+            return {key:i ,value:xpath.replace(/"/g, "'")}
+        });
     }
     if (newxpaths.length === 0) {
         // Handle the case where there are no XPaths to validate
@@ -75,7 +81,7 @@ const validateXPaths=function (xpathsTxtBox) {
 
 
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, { action: "validateXPaths", xpaths: newxpaths}, function (results) {
+        chrome.tabs.sendMessage(tabs[0].id, { action: "validateXPaths", xpaths: newxpaths }, function (results) {
             sessionStorage.setItem("xpathResults", JSON.stringify(results));
 
             // Check if there are validation results in session storage
