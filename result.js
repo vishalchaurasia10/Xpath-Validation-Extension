@@ -1,35 +1,43 @@
-// result.js
 let validResults = [];
 let invalidResults = [];
 
 document.getElementById("download_results").addEventListener("click", () => {
     // Generate the content with an extra line between valid and invalid results
-    const content = validResults.join('\n') + '\n\n' + invalidResults.join('\n');
+    const content = "Valid Xpaths: \n"+validResults.join('\n') + '\n\n' +"Invalid Xpaths\n\n"+ invalidResults.join('\n');
 
-    // Create a link element to initiate the download
-    const element = document.createElement('a');
-    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
-    element.setAttribute('download', 'results.txt');
+    // Ask the user for confirmation
+    const confirmed = confirm("Do you want to download the results?");
 
-    element.style.display = 'none';
-    document.body.appendChild(element);
+    if (confirmed) {
+        // Create a link element to initiate the download
+        const element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+        element.setAttribute('download', 'results.txt');
 
-    // Initiate the download
-    element.click();
+        element.style.display = 'none';
+        document.body.appendChild(element);
 
-    // Clean up: remove the element from the document body
-    document.body.removeChild(element);
+        // Initiate the download
+        element.click();
+
+        // Clean up: remove the element from the document body
+        document.body.removeChild(element);
+    } else {
+        // Do nothing if the user cancels the download
+        console.log("Download canceled.");
+    }
 });
 
 document.addEventListener("DOMContentLoaded", function () {
     const validationResultDiv = document.getElementById("validationResult");
     const storedResults = sessionStorage.getItem("xpathResults");
     (async()=>{
-      storedResults.forEach((result) => {
+        const results = JSON.parse(storedResults);
+      results.forEach((result) => {
         if (result.isValid) {
-            validresults.push(result);
+            validResults.push(result.key + " : " + result.value);
         } else {
-            invalidresults.push(result);
+            invalidResults.push(result.key + " : " + result.value);
         }
       })
     })();
