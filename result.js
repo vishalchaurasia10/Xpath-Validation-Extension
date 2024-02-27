@@ -1,8 +1,38 @@
 // result.js
+let validResults = [];
+let invalidResults = [];
+
+document.getElementById("download_results").addEventListener("click", () => {
+    // Generate the content with an extra line between valid and invalid results
+    const content = validResults.join('\n') + '\n\n' + invalidResults.join('\n');
+
+    // Create a link element to initiate the download
+    const element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+    element.setAttribute('download', 'results.txt');
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    // Initiate the download
+    element.click();
+
+    // Clean up: remove the element from the document body
+    document.body.removeChild(element);
+});
+
 document.addEventListener("DOMContentLoaded", function () {
     const validationResultDiv = document.getElementById("validationResult");
     const storedResults = sessionStorage.getItem("xpathResults");
-
+    (async()=>{
+      storedResults.forEach((result) => {
+        if (result.isValid) {
+            validresults.push(result);
+        } else {
+            invalidresults.push(result);
+        }
+      })
+    })();
     if (storedResults) {
         const results = JSON.parse(storedResults);
         validationResultDiv.innerHTML = "";
