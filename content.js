@@ -9,13 +9,13 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
             try {
                 const element = document.evaluate(value, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
                 if (element.snapshotLength > 0) {
-                    results.push({key, value, isValid: true });
+                    results.push({ key, value, isValid: true });
                 } else {
-                    results.push({key, value, isValid: false });
+                    results.push({ key, value, isValid: false });
                 }
             } catch (error) {
                 console.log("error", error);
-                results.push({key, value, isValid: false });
+                results.push({ key, value, isValid: false });
             }
         });
         sendResponse(results);
@@ -77,6 +77,7 @@ function suggestXPathCorrection(invalidXPath, document) {
     const xpathParts = invalidXPath.split('/');
     let outerLoop = [];
     let childArray = [];
+    let globalChildArray = [];
 
 
     outerLoop.push(`/${xpathParts[1]}`);
@@ -89,31 +90,44 @@ function suggestXPathCorrection(invalidXPath, document) {
             } else {
                 console.log('invalid xpath found', partialXPath);
                 const correctionType = identifyCorrectionType(partialXPath);
+                console.log('correctionType', correctionType);
                 const { allPossibleXpaths, prefix } = suggestCorrection(partialXPath, correctionType, document);
+                console.log('allPossibleXpaths', allPossibleXpaths);
                 childArray = allPossibleXpaths.map((possibleXpath) => {
-                    const currentValue  = possibleXpath;
+                    const currentValue = possibleXpath;
                     let currentCorrectionType = correctionType;  // Declare currentCorrectionType with let
-                    tempCorrectedValue = partialXPath.replace(`/${xpathParts[i-1]}`, '');
+                    tempCorrectedValue = partialXPath.replace(`/${xpathParts[i - 1]}`, '');
 
                     // Reconstruct the corrected XPath with the correct format
                     tempCorrectedValue = `${tempCorrectedValue}/${prefix}[@${currentCorrectionType}='${currentValue}']`;
 
+                    console.log('tempCorrectedValue', tempCorrectedValue);
+
                     if (isValidXPath(tempCorrectedValue, document)) {
+                        console.log('valid xpath found', tempCorrectedValue);
                         return tempCorrectedValue;
                     }
                     return null; // return null for invalid XPaths
                 })
                     .filter(Boolean); // filter out null values
                 outerLoop.splice(index, 1);
+
+                globalChildArray.push(...childArray);
+
+                console.log('globalChildArray', globalChildArray);
+                console.log('childArray', childArray);
+                console.log('outerLoop', outerLoop);
             }
         });
 
-        if (childArray.length > 0) {
-            outerLoop.push(...childArray);
+        if (globalChildArray.length > 0) {
+            console.log('globalChildArray', globalChildArray);
+            outerLoop.push(...globalChildArray);
+            globalChildArray = [];
         }
         if (i < xpathParts.length) {
             outerLoop = outerLoop.map((tempCorrectedValue) => {
-                return  tempCorrectedValue +`/${xpathParts[i]}`;
+                return tempCorrectedValue + `/${xpathParts[i]}`;
             });
         }
     }
@@ -122,8 +136,8 @@ function suggestXPathCorrection(invalidXPath, document) {
 
     console.log('invalidXPath', invalidXPath);
     outerLoop = outerLoop.filter((xpath) => {
-        return xpath!==invalidXPath;
-      });
+        return xpath !== invalidXPath && isValidXPath(xpath, document);
+    });
 
     const xpathSet = arrayToXPathSet(outerLoop);
     outerLoop = [...xpathSet];
@@ -151,10 +165,10 @@ function identifyCorrectionType(partialXPath) {
 
 function suggestCorrection(partialXPath, correctionType, document) {
     const lastElement = getLastElementFromXPath(partialXPath);
-    // console.log('partialXPath', partialXPath)
-    // console.log('lastElement', lastElement);
+    console.log('partialXPath', partialXPath)
+    console.log('lastElement', lastElement);
     const extractedValue = extractValueFromXPath(lastElement, correctionType);
-    // console.log('extractedValue', extractedValue);
+    console.log('extractedValue', extractedValue);
     const prefix = lastElement.substring(0, lastElement.indexOf(`[`))
 
     if (correctionType === 'class') {
@@ -193,7 +207,7 @@ function suggestCorrection(partialXPath, correctionType, document) {
             //     minDistance = distance;
             //     mostSimilarValue = currentValue;
             // }
-            allPossibleXpaths.push( currentValue)
+            allPossibleXpaths.push(currentValue)
         });
 
         // console.log('prefix', prefix);
@@ -210,7 +224,7 @@ function getLastElementFromXPath(partialXPath) {
 // Function to extract the ID from an XPath element (e.g., "@id='example'")
 function extractValueFromXPath(element, correctionType) {
     const matches = element.match(new RegExp(`@${correctionType}='([^']+)'`));
-    // console.log('matches', matches);
+    console.log('matches', matches);
     return matches ? matches[1] : null;
 }
 

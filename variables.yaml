@@ -18,3 +18,15 @@ naviagtion: /html/body/div/header/div[@aria-label="ation"]
 abc: /html/body/div/header/div[@cel_widget_id="desktop-hero-order"]/div[@class="a-section a-spacing-none aok-relative tall gw-desktop-herotator-ready"]
 heloo: /html/body/div/header/div[@id="desktop-banner"]/div[@class="a-section a-spacing-none aok-relative tall gw-desktop-herotator-ready"]
 there: /html/body/div/header/div[@id="navFooter"]/div[@role="presentation"]
+
+
+//*[@id='site-main']/div[@class='inner ad-layout']
+
+
+/html/body/div[1]/header/div/div[5]/div[2]/div[@id="nav-xshop"]
+//*[@id="nav-xshop"]
+/html/body/div[1]/header/div/div[1]/div[1]/div[@class="nav-progressive"]
+/html/body/div[1]/header/div/div[1]/div[1]/div[2]/input[@name="dropdown-selection"]
+/html/body/div[1]/header/div/div[5]/div[2]/div/div/a[@class="nav-a']
+
+/html/body/div[1]/header/div/div[5]/div[2]/div[@id="nav-xshop-con"]/div[@class="nav-progressive"]

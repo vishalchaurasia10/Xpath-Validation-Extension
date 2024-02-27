@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     });
                 } else {
                     // xpathDetailsDiv.innerHTML += formatRecommendationDetails(xpath);
-                    findCorrectXpath(xpath);
+                    // findCorrectXpath(xpath);
                     recommendationOnTheBasisOfIdClass(xpath);
                 }
             });
