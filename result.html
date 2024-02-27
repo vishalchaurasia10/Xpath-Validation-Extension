@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
+<title>Results</title>
 <head>
     <link rel="stylesheet" type="text/css" href="dist/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
@@ -8,11 +8,16 @@
 
 <body class="bg-black font-firaCode border-white border-2">
     <div class="extensionContainer w-[35rem] h-[35rem] flex flex-col items-center p-5 space-y-5">
-        <div class="heading flex items-center space-x-4 w-full">
-            <a href="popup.html" title="Go Back">
-                <i class="fa-solid fa-arrow-left text-3xl text-[#57E6D9]"></i>
-            </a>
-            <h2 class="text-4xl font-extrabold text-[#57E6D9] capitalize">Results</h2>
+        <div class="heading flex items-center justify-between w-full">
+            <div class="flex items-center space-x-4">
+                <a href="popup.html" title="Go Back">
+                    <i class="fa-solid fa-arrow-left text-3xl text-[#57E6D9]"></i>
+                </a>
+                <h2 class="text-4xl font-extrabold text-[#57E6D9] capitalize">Results</h2>
+            </div>
+            <div role="button" class="cursor-pointer" aria-label="download result">
+                <i id="download_results" class="fa-solid fa-download cursor-pointer text-white text-3xl"></i>
+            </div>
         </div>
         <div class="text-white space-y-4 w-full h-full overflow-y-auto bg-[rgba(255,255,255,0.2)] rounded-2xl p-4 px-5"
             id="validationResult">

@@ -1,8 +1,46 @@
-// result.js
+let validResults = [];
+let invalidResults = [];
+
+document.getElementById("download_results").addEventListener("click", () => {
+    // Generate the content with an extra line between valid and invalid results
+    const content = "Valid Xpaths: \n"+validResults.join('\n') + '\n\n' +"Invalid Xpaths\n\n"+ invalidResults.join('\n');
+
+    // Ask the user for confirmation
+    const confirmed = confirm("Do you want to download the results?");
+
+    if (confirmed) {
+        // Create a link element to initiate the download
+        const element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+        element.setAttribute('download', 'results.txt');
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        // Initiate the download
+        element.click();
+
+        // Clean up: remove the element from the document body
+        document.body.removeChild(element);
+    } else {
+        // Do nothing if the user cancels the download
+        console.log("Download canceled.");
+    }
+});
+
 document.addEventListener("DOMContentLoaded", function () {
     const validationResultDiv = document.getElementById("validationResult");
     const storedResults = sessionStorage.getItem("xpathResults");
-
+    (async()=>{
+        const results = JSON.parse(storedResults);
+      results.forEach((result) => {
+        if (result.isValid) {
+            validResults.push(result.key + " : " + result.value);
+        } else {
+            invalidResults.push(result.key + " : " + result.value);
+        }
+      })
+    })();
     if (storedResults) {
         const results = JSON.parse(storedResults);
         validationResultDiv.innerHTML = "";
