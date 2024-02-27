@@ -552,36 +552,28 @@ video {
   display: flex;
 }
 
-.h-\[25rem\]{
-  height: 25rem;
+.h-\[35rem\]{
+  height: 35rem;
 }
 
 .h-full{
   height: 100%;
 }
 
-.h-\[45rem\]{
-  height: 45rem;
+.w-1\/2{
+  width: 50%;
 }
 
-.h-\[35rem\]{
-  height: 35rem;
-}
-
-.w-\[25rem\]{
-  width: 25rem;
+.w-\[35rem\]{
+  width: 35rem;
 }
 
 .w-full{
   width: 100%;
 }
 
-.w-\[45rem\]{
-  width: 45rem;
-}
-
-.w-\[35rem\]{
-  width: 35rem;
+.cursor-pointer{
+  cursor: pointer;
 }
 
 .flex-col{
@@ -590,6 +582,14 @@ video {
 
 .items-center{
   align-items: center;
+}
+
+.justify-end{
+  justify-content: flex-end;
+}
+
+.justify-between{
+  justify-content: space-between;
 }
 
 .space-x-4 > :not([hidden]) ~ :not([hidden]){
@@ -698,6 +698,11 @@ video {
 .py-4{
   padding-top: 1rem;
   padding-bottom: 1rem;
+}
+
+.px-3{
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
 }
 
 .font-firaCode{
